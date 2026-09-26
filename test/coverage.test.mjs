@@ -1,0 +1,11 @@
+import { lookDefinitions } from "../src/options/look-schema.js";
+import { DEFAULT_SETTINGS } from "../src/settings.js";
+const target = { ...DEFAULT_SETTINGS };
+const cards = lookDefinitions({ get: (k) => target[k], set: (k) => async (v) => { target[k] = v; } });
+const covered = new Set([...cards.gates]);
+cards.cardKeys && Object.values(cards.cardKeys).forEach((ks) => ks.forEach((k) => covered.add(k)));
+for (const c of cards) c.items.forEach((i) => (i.controls || []).forEach((ct) => { if (ct.key) covered.add(ct.key); }));
+const all = Object.keys(DEFAULT_SETTINGS);
+console.log("total settings:", all.length, "| covered by look cards:", covered.size);
+console.log("\nNOT in look cards:");
+for (const k of all) if (!covered.has(k)) console.log("  " + k + " = " + JSON.stringify(DEFAULT_SETTINGS[k])?.slice(0, 46));

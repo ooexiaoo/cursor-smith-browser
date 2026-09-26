@@ -1,0 +1,305 @@
+/*
+ * Cursor-Smith - in-page engine styles.
+ *
+ * Injected into every document the extension is allowed into. Deliberately
+ * narrow: it positions the canvas wrapper, hides the native caret, and layers
+ * the torch. Nothing here styles a settings control - those live in the
+ * options page, which is a separate document with its own stylesheet.
+ *
+ * Derived from the Cursor-Smith Obsidian plugin by SadSnake1.
+ */
+/* --- Canvas Engine Styles (Box, Line, Underline) --- */
+/* The wrapper is the fixed, clipping, inert box the tick sizes to the
+   caret's neighbourhood; the canvas sits absolutely inside it. This one
+   stylesheet reaches every document the canvas migrates into - Obsidian
+   clones the main window's stylesheets into each pop-out and into the 1.13
+   settings window. Collapsed to 0x0 until the tick sizes them so nothing
+   can sit over the drag surface meanwhile. */
+.cursor-smith-wrapper {
+  position: fixed;
+  overflow: hidden;
+  pointer-events: none;
+  /* Above the torch's darkness (10010) and glow (10011); see there. */
+  z-index: 10012;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+}
+/* On a phone the wrapper is a layer of the scrolled content, inside the
+   editor's scroller beside CodeMirror's own cursor layer (an absolute child
+   at 150), so the compositor carries the caret with the text between
+   frames; a fixed overlay trails a fling by a frame or more there. The
+   scroller is a stacking context, so this z-index is local to it: the
+   torch's darkness (outside, 10010) covers the caret on a phone, and the
+   light it follows is what shows it. */
+.cursor-smith-wrapper.cursor-smith-wrapper-scrolled {
+  position: absolute;
+  z-index: 151;
+}
+.cursor-smith-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+/* The Translucent option works by putting a mix-blend-mode on the canvas
+   WRAPPER (the div this canvas sits in), set from main.js - see
+   applyCanvasBlend there for why it has to be the wrapper and not the canvas
+   itself. Two things would quietly break it, neither of which looks like a
+   bug at the point you'd write it:
+
+     • `isolation: isolate` on anything between the wrapper and
+       .app-container. Isolation stops the blend reaching the editor, so the
+       option silently does nothing at all.
+     • a mix-blend-mode declared on .cursor-smith-canvas here. The
+       wrapper is a stacking context, so a blend on the canvas inside it
+       composites against the wrapper's empty background - no visible effect,
+       and it costs a blend pass every frame to achieve nothing.
+
+   Keep blend-mode handling for this layer in main.js only. */
+
+/* The class is doubled (`.foo.foo`) purely to raise this selector's
+   specificity above a plausible community theme or CSS snippet that sets
+   caret-color on the same or a more specific element - without reaching for
+   !important, which would make this impossible for a user to override in
+   turn (e.g. to combine this plugin with their own caret tweaks).
+
+   ZERO ALPHA, NOT `transparent`. On iOS, WebKit tints the entire selection
+   UI - the highlight wash and both drag handles - with caret-color, and uses
+   only its RGB channels, discarding the alpha. `transparent` is
+   rgba(0, 0, 0, 0), so the tint it hands over is BLACK. That is issue #24: a
+   selection painted black on a dark theme with two black handles nobody can
+   see to grab. Measured off the reporter's pair of screenshots - the broken
+   highlight is rgb(16,16,16) over an rgb(20,20,20) background, the working
+   one rgb(42,31,53), i.e. the same wash at the same ~20% alpha differing
+   only in the tint - and the handles are the same colour at full alpha.
+
+   Alpha is what hides the caret, so holding it at 0 hides it exactly as
+   `transparent` did; only the channels iOS misreads change. Chromium
+   (desktop, and Android) never derives selection colours from caret-color,
+   so this is inert everywhere except the platform that has the bug - no
+   platform sniffing needed.
+
+   The accent, rather than some fixed colour, because that is what Obsidian
+   builds its own --text-selection from, so the iOS highlight lands on the
+   same hue the desktop one already uses. The literal fallback is not
+   decoration: an undefined var() makes the declaration invalid AT
+   COMPUTED-VALUE TIME, and that resolves to `unset` - inherited, i.e. a
+   fully VISIBLE caret - rather than falling back to any earlier
+   declaration. */
+body.cursor-smith-hide-native.cursor-smith-hide-native {
+  caret-color: hsla(254, 80%, 68%, 0);
+}
+
+/* CodeMirror 6 (Obsidian's editor) draws its own cursor as a DOM element
+   rather than relying on the browser's native caret, so caret-color alone
+   doesn't hide it - it has its own independent blink cycle and would
+   otherwise flash through whenever our custom cursor fades out. The
+   ancestor class is doubled for the same specificity reason as above: CM6
+   themes style these cursor elements directly, so we need real specificity
+   headroom rather than relying on !important or stylesheet load order. */
+body.cursor-smith-hide-native.cursor-smith-hide-native .cm-cursor,
+body.cursor-smith-hide-native.cursor-smith-hide-native .cm-cursor-primary,
+body.cursor-smith-hide-native.cursor-smith-hide-native .cm-cursor-secondary,
+body.cursor-smith-hide-native.cursor-smith-hide-native .cm-fat-cursor,
+body.cursor-smith-hide-native.cursor-smith-hide-native .cm-dropCursor {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  border-color: transparent;
+  background-color: transparent;
+}
+
+/* The cursor LAYER carries CodeMirror's blink as a CSS animation (cm-blink,
+   steps(1)). A running main-thread animation has its style recalculated on
+   every rendering frame - including every frame this plugin's loop requests,
+   of which an idle page would otherwise have almost none. With every cursor
+   in the layer hidden above, the animation animates nothing; stopping it took
+   idle style recalcs from ~25/s to 0 (measured 2026-09-17). */
+body.cursor-smith-hide-native.cursor-smith-hide-native .cm-cursorLayer {
+  animation: none;
+}
+
+/* Belt-and-braces: some CM themes set caret-color directly on .cm-content
+   or .cm-line. That used to tie in specificity with the rule above and
+   fall back to stylesheet load order (fixed here with !important); doubling
+   the ancestor class instead gives this selector more specificity than a
+   theme's plain `.cm-content`/`.cm-line` rule outright, so we no longer
+   depend on load order OR need !important to win the cascade.
+
+   The same zero-alpha accent as the body rule, and it has to be: this
+   selector is the MORE specific of the two, so a `transparent` left here
+   would win inside the editor and keep issue #24 alive in the one place the
+   plugin is actually for. */
+body.cursor-smith-hide-native.cursor-smith-hide-native .cm-content,
+body.cursor-smith-hide-native.cursor-smith-hide-native .cm-line {
+  caret-color: hsla(254, 80%, 68%, 0);
+}
+
+/* Plugins that draw their own caret onto a CSS-transformed surface, where we
+   deliberately decline to draw one (see isExcalidrawCaretHost in main.js).
+   Excalidraw edits text in a <textarea> scaled and rotated to match the shape,
+   which our measuring code cannot follow, so suppressing our cursor there is
+   the fix - but the body rule above works purely by INHERITANCE, so without
+   this carve-out the textarea would inherit the zero-alpha caret colour and
+   end up with no caret from either source. A declaration on the element
+   itself always beats an inherited value, so no doubled class is needed
+   here. */
+body.cursor-smith-hide-native .excalidraw textarea,
+body.cursor-smith-hide-native .excalidraw-wrapper textarea,
+body.cursor-smith-hide-native textarea.excalidraw-wysiwyg {
+  caret-color: auto;
+}
+
+/* --- Torch spotlight -----------------------------------------------------
+   Two fixed layers under .app-container, siblings of the canvas wrapper:
+   the darkness and, above it, the warm core. Both are canvases PAINTED by
+   the torch tick (paintTorchDarkness / paintTorchGlow); nothing here is a
+   gradient, and nothing here is settings-driven except through the custom
+   property the tick writes. Both are collapsed to 0x0 until the tick sizes
+   them, so neither can sit over the window's drag surface meanwhile.
+
+   NO mix-blend-mode on the darkness. It used to be multiply with a warm
+   colour at the centre stop, which is why the spotlight read as a muddy
+   brown wash rather than as a dark room: multiply can only ever darken, so
+   a warm "tint" walks the page toward brown instead of lighting it. Plain
+   black with alpha, composited normally, is what the reference does - and
+   it is one less blend pass per frame. */
+.cursor-smith-torch-overlay {
+  position: fixed;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  /* 10010, the glow 10011 and the caret canvas 10012, in that order: above
+     all of Word-Smith's chrome while the editor is focused - its letterbox
+     masks (10003), status bar (10006), titlebar (10007) and Vim panel
+     (10008); 20-24 on blur - and below its overlays (10050 and up). At
+     9990 the bands read lit while typing and dark once focus left the
+     note; at 10004 its bar and the sidebars' headers stayed lit under a
+     full-window torch. Nothing of Obsidian's sits between (its own layers
+     stop at the tooltip's 70). */
+  z-index: 10010;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* The warm core, as its own layer. It CANNOT live inside
+   .cursor-smith-torch-overlay: that element carries a z-index, so it is a
+   stacking context, and a screen blend nested inside it would composite
+   against the overlay's own pixels instead of against the editor - visible
+   effect nil, cost one blend pass per frame. See ARCHITECTURE.md,
+   "Blending against the editor". Additive (screen) because multiply can
+   only darken; this sits one z-index above the darkness so it lights what
+   the overlay just dimmed. Built and destroyed by the torch tick, only
+   while Glow strength > 0 - a blended layer costs a re-composite of
+   everything beneath it whether or not it is showing anything.
+
+   Glow strength scales the whole layer through --torch-glow rather than
+   the painted falloff, so the shape stays put as the slider moves and the
+   candle flicker is one number to multiply in. */
+.cursor-smith-torch-glow {
+  position: fixed;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 10011;
+  mix-blend-mode: screen;
+  opacity: var(--torch-glow, 0);
+}
+/* Two classes outrank the one-class rules above; nothing sets these
+   inline, so no !important is needed to hide a layer. */
+.cursor-smith-torch-glow.cursor-smith-torch-hidden,
+.cursor-smith-torch-overlay.cursor-smith-torch-hidden {
+  opacity: 0;
+  display: none;
+}
+
+/* The candle flicker LIVES IN THE TORCH TICK, which writes --torch-glow
+   under the frame governor. It used to be a keyframe animation here, and
+   that is why this warning exists rather than the feature: a CSS animation
+   runs on the compositor, entirely outside the rAF frame governor, so it
+   pinned the display to full refresh rate for as long as the torch was on,
+   no matter which gear the render loops chose - and on a layer blended over
+/* --- Toasts (shim/notice.js) ------------------------------------------------
+   Deliberately unmissable but not modal: the engine raises these for things
+   worth knowing that must not interrupt typing (preset cycled, mode switched,
+   performance report finished). Fixed to the bottom-right, above everything,
+   and never interactive except to dismiss. */
+
+.cursor-smith-toasts {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+  font: 500 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.cursor-smith-toast {
+  max-width: min(320px, calc(100vw - 32px));
+  padding: 9px 13px;
+  border-radius: 8px;
+  background: hsla(0, 0%, 12%, 0.94);
+  color: hsl(0, 0%, 96%);
+  box-shadow: 0 6px 22px hsla(0, 0%, 0%, 0.4);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
+  transition: opacity 180ms ease, transform 180ms cubic-bezier(0.2, 0.9, 0.3, 1);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.cursor-smith-toast.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-color-scheme: light) {
+  .cursor-smith-toast {
+    background: hsla(0, 0%, 98%, 0.96);
+    color: hsl(0, 0%, 10%);
+    box-shadow: 0 6px 22px hsla(0, 0%, 0%, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-smith-toast {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* --- Vim mode indicator -----------------------------------------------------
+   Upstream this was a status-bar item, because Obsidian has a status bar to put
+   it in. A web page has no such affordance and adding one to someone else's
+   page would be rude, so it becomes a small fixed badge that appears only in
+   Vim mode and only while an editor is focused. */
+
+.cursor-smith-vim-status {
+  position: fixed;
+  /* Bottom-LEFT, against the toasts' bottom-right: the two are never up at the
+     same moment often, but when they are they must not overlap. */
+  left: 16px;
+  bottom: 16px;
+  z-index: 2147483000;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font: 600 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: hsla(0, 0%, 20%, 0.9);
+  pointer-events: none;
+  user-select: none;
+}

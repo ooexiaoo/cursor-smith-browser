@@ -1,0 +1,14 @@
+import { lookDefinitions } from "../src/options/look-schema.js";
+import { DEFAULT_SETTINGS } from "../src/settings.js";
+const target = { ...DEFAULT_SETTINGS };
+const cards = lookDefinitions({ get: (k) => target[k], set: (k) => async (v) => { target[k] = v; } });
+const c = cards[3];
+console.log("gates:", [...cards.gates].join(", "));
+console.log("cardKeys.Effects:", cards.cardKeys.Effects.slice(0, 8).join(", "));
+console.log("summary(Appearance):", cards.summaries.Appearance());
+console.log("summary(Effects):", cards.summaries.Effects());
+console.log("effectsOn:", cards.effectsOn().map(e=>e.name).join(", "));
+console.log("\nrow spec:", JSON.stringify(c.items[3], (k,v)=> typeof v==='function'?'[fn]':v, 1).slice(0,700));
+const vis = c.items.filter(i => i.visible && !i.visible());
+console.log("\nhidden by default:", vis.length, "of", c.items.length);
+console.log("cards:", cards.map(x=>`${x.title}(${x.items.length})`).join("  "));

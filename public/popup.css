@@ -1,0 +1,67 @@
+/* The popup is the options page, narrowed. It reuses options.css for the shell
+   and controls and only overrides what has to change at 300px. */
+
+body.cs-popup { width: 300px; background: var(--bg); }
+
+.cs-pop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--bg-sunken);
+}
+.cs-pop-brand { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.cs-pop-mark { display: grid; place-items: center; color: var(--accent); }
+.cs-pop-host {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 10.5px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cs-pop-host.is-off { background: rgba(247, 106, 106, 0.14); color: #ff9a9a; }
+
+.cs-pop-main { padding: 6px 0; }
+.cs-pop-main .cs-row { cursor: pointer; padding: 10px 14px; border-top: 0; }
+.cs-pop-main .cs-row:hover { background: var(--panel); }
+.cs-pop-main .cs-row-text { display: flex; flex-direction: column; }
+
+.cs-pop-actions { display: flex; gap: 8px; padding: 4px 14px 14px; }
+.cs-pop-actions .cs-btn { flex: 1; justify-content: center; }
+
+.cs-pop-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--bg-sunken);
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+.cs-pop-note { display: inline-flex; align-items: center; gap: 6px; }
+.cs-pop-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.cs-pop-count { color: #4a5364; }
+
+.cs-pop-flash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  padding: 10px 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel-2);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.18s var(--ease);
+}
+.cs-pop-flash.is-in { opacity: 1; }
