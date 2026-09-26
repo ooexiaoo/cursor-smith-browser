@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Cursor-Smith",
+  "name": "Cursor-Smith for Browsers (unofficial)",
   "version": "1.0.0",
-  "description": "Forge your cursor: smearing, torchlight, flame trails, thunderbolts, CRT and more, drawn over any text field on the web.",
+  "description": "Unofficial browser port of the Cursor-Smith engine by SadSnake1. Torchlight, CRT, smearing, flame trails - over any text field.",
   "minimum_chrome_version": "110",
   "icons": {
     "16": "icons/icon-16.png",

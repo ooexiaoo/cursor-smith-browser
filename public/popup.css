@@ -37,6 +37,7 @@ body.cs-popup { width: 300px; background: var(--bg); }
 
 .cs-pop-foot {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -49,6 +50,14 @@ body.cs-popup { width: 300px; background: var(--bg); }
 .cs-pop-note { display: inline-flex; align-items: center; gap: 6px; }
 .cs-pop-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 .cs-pop-count { color: #4a5364; }
+.cs-pop-unofficial {
+  flex-basis: 100%;
+  margin-top: 2px;
+  color: #4a5364;
+  font-size: 10px;
+}
+.cs-pop-report { color: var(--accent); text-decoration: none; }
+.cs-pop-report:hover { text-decoration: underline; }
 
 .cs-pop-flash {
   position: absolute;

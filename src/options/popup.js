@@ -10,6 +10,7 @@ import { DEFAULT_SETTINGS, VIM_STATE_KEYS, presetWithDefaults } from "../setting
 import { loadSettings, saveSettings } from "../shim/storage.js";
 import { siteEnabled, NEVER_SITES } from "../shim/sites.js";
 
+const REPO = "https://github.com/ooexiaoo/cursor-smith-extension";
 const root = document.getElementById("root");
 let settings = { ...DEFAULT_SETTINGS };
 let here = null;
@@ -51,7 +52,7 @@ function draw() {
   const head = h("header", { class: "cs-pop-head" },
     h("div", { class: "cs-pop-brand" },
       h("span", { class: "cs-pop-mark", html: iconSvg("mouse-pointer-2", { size: 15 }) }),
-      h("span", {}, "Cursor-Smith")),
+      h("span", {}, "Cursor-Smith for Browsers")),
     h("span", { class: "cs-pop-host" + (enabledHere ? "" : " is-off") }, host() || "this page"));
 
   const main = h("div", { class: "cs-pop-main" },
@@ -78,9 +79,13 @@ function draw() {
 
   const actions = h("div", { class: "cs-pop-actions" }, cycleBtn, openBtn);
 
+  const report = h("a", { class: "cs-pop-report", href: REPO + "/issues" }, "Report a bug");
+  report.addEventListener("click", (e) => { e.preventDefault(); chrome.tabs.create({ url: REPO + "/issues" }); });
+
   const foot = h("footer", { class: "cs-pop-foot" },
     h("span", { class: "cs-pop-note" }, h("span", { class: "cs-pop-dot" }), "Alt+Shift+C toggles on any page"),
-    NEVER_SITES.length ? h("span", { class: "cs-pop-count" }, NEVER_SITES.length + " sites never touched") : null);
+    NEVER_SITES.length ? h("span", { class: "cs-pop-count" }, NEVER_SITES.length + " sites never touched") : null,
+    h("span", { class: "cs-pop-unofficial" }, "Unofficial port of SadSnake1's plugin - ", report));
 
   clear(root);
   root.append(head, main, actions, foot);

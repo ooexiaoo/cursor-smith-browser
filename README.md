@@ -1,10 +1,19 @@
-# Cursor-Smith for the browser
+# Cursor-Smith for Browsers (unofficial)
 
 A browser port of [**Cursor-Smith**](https://github.com/SadSnake1/cursor-smith), the
 Obsidian cursor engine by [SadSnake1](https://github.com/SadSnake1).
 
 Upstream replaces the caret inside Obsidian's editors. This is the same engine,
 running on **every website**, in Chrome, Edge and Brave.
+
+> **This is an unofficial port.** It is not affiliated with, endorsed by, or
+> maintained by SadSnake1, who has no hand in it. The engine is theirs and is
+> redistributed under MIT; the browser shell around it is maintained here,
+> independently.
+>
+> **Browser bugs belong here:** <https://github.com/ooexiaoo/cursor-smith-extension/issues>.
+> Please don't send them upstream — Obsidian-specific problems still belong in
+> [SadSnake1/cursor-smith](https://github.com/SadSnake1/cursor-smith/issues).
 
 > **The engine is SadSnake1's work.** Everything under `src/paint/`, plus the
 > caret, physics, effect and Vim logic, is upstream's code extracted from the
