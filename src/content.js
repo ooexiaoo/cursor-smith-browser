@@ -14,7 +14,7 @@ import { disposeHost } from "./shim/host.js";
 // to exist before it constructs anything.
 import "./shim/dom.js";
 
-const STYLE_ID = "cursor-smith-extension-css";
+const STYLE_ID = "cursor-smith-browsers-css";
 const GLOBAL_KEY = "__cursorSmithInstance";
 
 function injectStyles(doc) {

@@ -177,7 +177,7 @@ async function pageGeneral(mount) {
       h("kbd", { class: "cs-kbd" }, command));
 
   main.append(
-    card("Cursor-Smith for Browsers", "Unofficial port of the Obsidian plugin by SadSnake1. Browser bugs go to github.com/ooexiaoo/cursor-smith-extension, not upstream.",
+    card("Cursor-Smith for Browsers", "Unofficial port of the Obsidian plugin by SadSnake1. Browser bugs go to github.com/ooexiaoo/cursor-smith-browsers, not upstream.",
       switchRow("Enable Cursor-Smith", "Master switch. Also off per device below, so a synced profile can stay quiet on a machine you did not set up.",
         deviceEnabled && settings.enabled, async (v) => {
           deviceEnabled = v;

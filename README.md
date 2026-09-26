@@ -11,7 +11,7 @@ running on **every website**, in Chrome, Edge and Brave.
 > redistributed under MIT; the browser shell around it is maintained here,
 > independently.
 >
-> **Browser bugs belong here:** <https://github.com/ooexiaoo/cursor-smith-extension/issues>.
+> **Browser bugs belong here:** <https://github.com/ooexiaoo/cursor-smith-browsers/issues>.
 > Please don't send them upstream — Obsidian-specific problems still belong in
 > [SadSnake1/cursor-smith](https://github.com/SadSnake1/cursor-smith/issues).
 
@@ -26,8 +26,8 @@ running on **every website**, in Chrome, Edge and Brave.
 ## Install
 
 ```bash
-git clone https://github.com/ooexiaoo/cursor-smith-extension
-cd cursor-smith-extension
+git clone https://github.com/ooexiaoo/cursor-smith-browsers
+cd cursor-smith-browsers
 npm install
 npm run build
 ```

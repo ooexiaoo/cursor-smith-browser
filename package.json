@@ -1,5 +1,5 @@
 {
-  "name": "cursor-smith-extension",
+  "name": "cursor-smith-browsers",
   "version": "1.0.0",
   "private": true,
   "description": "Cursor-Smith as a Chrome/Brave/Edge extension: a forgeable text cursor with smearing, torchlight, flame trails, thunderbolts and more.",
