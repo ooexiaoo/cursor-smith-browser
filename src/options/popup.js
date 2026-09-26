@@ -10,7 +10,7 @@ import { DEFAULT_SETTINGS, VIM_STATE_KEYS, presetWithDefaults } from "../setting
 import { loadSettings, saveSettings } from "../shim/storage.js";
 import { siteEnabled, NEVER_SITES } from "../shim/sites.js";
 
-const REPO = "https://github.com/ooexiaoo/cursor-smith-browsers";
+const REPO = "https://github.com/ooexiaoo/cursor-smith-browser";
 const root = document.getElementById("root");
 let settings = { ...DEFAULT_SETTINGS };
 let here = null;
