@@ -1,0 +1,11 @@
+Cursor-Smith is copyright (c) 2026 SadSnake1
+and is redistributed here under the MIT License, as published at
+https://github.com/SadSnake1/cursor-smith.
+
+The cursor engine under src/paint/, src/core.js and the extracted modules was
+written by SadSnake1 and is included here unmodified in substance. It was
+extracted mechanically from the released Obsidian bundle; no logic was rewritten.
+
+This project is a browser port. The MIT notice in LICENSE covers both the
+redistributed engine and the port layer written for it. CREDITS.md sets out
+exactly which files are upstream's and which this port adds.

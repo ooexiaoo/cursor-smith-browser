@@ -20,12 +20,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-The cursor engine under src/paint/, src/core.js and the extracted modules was
-written by SadSnake1 and is redistributed here under the same MIT terms, as
-published at https://github.com/SadSnake1/cursor-smith. It is mechanically
-extracted from the released Obsidian bundle with mechanical substitutions only.
-See CREDITS.md for the full breakdown of what is upstream and what this port
-adds.
